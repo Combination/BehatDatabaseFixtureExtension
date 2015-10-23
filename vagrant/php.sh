@@ -10,3 +10,6 @@ export LANG=en_US.UTF-8
 sudo aptitude update -q
 
 sudo aptitude install -q -y -f php5-cli php5-curl
+
+curl -s https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
