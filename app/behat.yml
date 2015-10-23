@@ -17,3 +17,9 @@ default:
                 - AppBundle\Features\Context\CoreContext
             filters:
                 tags: "@fixtures"
+
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                env: test
+                debug: true
