@@ -14,5 +14,6 @@ default:
                 - %paths.base%/src/AppBundle/Features/Fixtures
             contexts:
                 - AppBundle\Features\Context\FixturesContext
+                - AppBundle\Features\Context\CoreContext
             filters:
                 tags: "@fixtures"
