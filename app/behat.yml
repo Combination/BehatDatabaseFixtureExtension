@@ -1,0 +1,18 @@
+default:
+    formatters:
+        pretty:
+            verbose: true
+            paths: false
+            snippets: false
+
+    autoload:
+        '': %paths.base%
+
+    suites:
+        fixtures:
+            paths:
+                - %paths.base%/src/AppBundle/Features/Fixtures
+            contexts:
+                - AppBundle\Features\Context\FixturesContext
+            filters:
+                tags: "@fixtures"
