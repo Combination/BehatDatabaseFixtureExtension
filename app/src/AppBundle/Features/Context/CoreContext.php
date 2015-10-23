@@ -25,25 +25,54 @@ class CoreContext implements Context, KernelAwareContext
     }
 
     /**
-     * @param string $table
-     */
-    protected function clearTable($table)
-    {
-        /** @var Connection $connection */
-        $connection = $this->container->get('doctrine')->getConnection();
-        $connection->query("TRUNCATE TABLE $table");
-    }
-
-    /**
      * @Given /^Truncated tables$/
      * @param TableNode $table
      */
-    public function thereAreInDbTruncatedTables(TableNode $table)
+    public function truncatedTables(TableNode $table)
     {
         foreach ($table->getTable() as $tableNames) {
             foreach ($tableNames as $tableName) {
                 $this->clearTable($tableName);
             }
         }
+    }
+
+    /**
+     * @Given /^There are items in table \'([^\']+)\'$/
+     * @param string $tableName
+     * @param TableNode $table
+     */
+    public function thereAreItemsInTable($tableName, TableNode $table)
+    {
+        /* @var $connection \Doctrine\DBAL\Connection */
+        $connection = $this->container->get('doctrine')->getConnection();
+
+        $fields = $table->getRow(0);
+        $tableFields = '`' . implode('`, `', $fields) . '`';
+        $tablePlaceholders = ':' . implode(', :', $fields);
+        $sth = $connection->prepare(
+            str_replace(
+                ['__table', '__fields', '__placeholders'],
+                [$tableName, $tableFields, $tablePlaceholders],
+                '
+                    INSERT INTO __table (__fields)
+                    VALUES (__placeholders)
+                '
+            )
+        );
+
+        foreach ($table as $row) {
+            $sth->execute($row);
+        }
+    }
+
+    /**
+     * @param string $table
+     */
+    private function clearTable($table)
+    {
+        /** @var Connection $connection */
+        $connection = $this->container->get('doctrine')->getConnection();
+        $connection->query("TRUNCATE TABLE $table");
     }
 }
